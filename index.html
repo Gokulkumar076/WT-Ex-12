@@ -1,0 +1,744 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>LexCounsel - Legal Consultation</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            margin: 0;
+            font-family: "Segoe UI", Arial, sans-serif;
+            background: #f5f3ee;
+            color: #1f2937;
+            line-height: 1.6;
+        }
+
+        header {
+            background: #0f1e3d;
+            padding: 14px 24px;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .brand {
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+            font-family: Georgia, serif;
+            text-decoration: none;
+        }
+
+        .brand span {
+            color: #c9a227;
+        }
+
+        nav {
+            display: flex;
+            gap: 18px;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        nav a:hover {
+            color: #c9a227;
+        }
+
+        .banner {
+            background: linear-gradient(120deg, #0f1e3d, #1c3160);
+            color: white;
+            text-align: center;
+            padding: 44px 20px;
+        }
+
+        .banner h1 {
+            margin: 0 0 6px;
+            font-family: Georgia, serif;
+            color: #c9a227;
+            font-size: 34px;
+        }
+
+        .banner p {
+            margin: 0;
+            color: #d1d5db;
+        }
+
+        main {
+            max-width: 1000px;
+            margin: 28px auto;
+            padding: 0 20px;
+        }
+
+        .card {
+            background: white;
+            padding: 26px;
+            border-radius: 12px;
+            box-shadow: 0 6px 20px rgba(15, 30, 61, 0.08);
+            margin-bottom: 24px;
+            scroll-margin-top: 16px;
+        }
+
+        .card h2 {
+            margin-top: 0;
+            font-family: Georgia, serif;
+            color: #0f1e3d;
+        }
+
+        .fields {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px 18px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #0f1e3d;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 11px 12px;
+            border: 1px solid #d6d3cb;
+            border-radius: 6px;
+            font: inherit;
+            background: #fdfcfa;
+        }
+
+        input:focus, select:focus {
+            outline: 2px solid rgba(201, 162, 39, 0.35);
+            border-color: #c9a227;
+        }
+
+        small {
+            display: block;
+            margin-top: 4px;
+            color: #dc2626;
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        button {
+            background: #c9a227;
+            color: #0f1e3d;
+            border: none;
+            border-radius: 6px;
+            padding: 11px 22px;
+            font: inherit;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #a8851a;
+            color: white;
+        }
+
+        button.plain {
+            background: #e5e7eb;
+            color: #1f2937;
+        }
+
+        button.small {
+            padding: 5px 12px;
+            font-size: 14px;
+        }
+
+        button.danger {
+            background: #b91c1c;
+            color: white;
+        }
+
+        .message {
+            margin: 16px 0 0;
+            padding: 10px 14px;
+            border-radius: 6px;
+            font-weight: 600;
+        }
+
+        .success {
+            background: #dcfce7;
+            color: #15803d;
+        }
+
+        .error {
+            background: #fee2e2;
+            color: #b91c1c;
+        }
+
+        .table-wrap {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 11px 10px;
+            border-bottom: 1px solid #eee;
+            text-align: left;
+            white-space: nowrap;
+        }
+
+        th {
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .row-actions {
+            display: flex;
+            gap: 6px;
+        }
+
+        .status {
+            padding: 2px 10px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .pending {
+            background: #fef3c7;
+            color: #92600a;
+        }
+
+        .confirmed {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .completed {
+            background: #dcfce7;
+            color: #15803d;
+        }
+
+        .empty, .note {
+            color: #6b7280;
+        }
+
+        .note {
+            margin-top: 14px;
+            font-size: 14px;
+        }
+
+        footer {
+            background: #0a1530;
+            color: #cbd5e1;
+            text-align: center;
+            padding: 18px;
+            font-size: 14px;
+        }
+
+        @media (max-width: 640px) {
+            .fields {
+                grid-template-columns: 1fr;
+            }
+
+            .banner h1 {
+                font-size: 26px;
+            }
+
+            .card {
+                padding: 18px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div id="root"></div>
+
+<script type="text/babel">
+
+const { useState, useEffect } = React;
+
+const STORAGE_KEY = "lexcounsel-consultations";
+
+const samples = [
+    {
+        _id: "1",
+        clientName: "Priya Raman",
+        mobile: "9876500011",
+        practiceArea: "Family Law",
+        date: "2026-12-02",
+        status: "Confirmed"
+    },
+    {
+        _id: "2",
+        clientName: "Arun Kumar",
+        mobile: "9876500022",
+        practiceArea: "Property Law",
+        date: "2026-12-05",
+        status: "Pending"
+    },
+    {
+        _id: "3",
+        clientName: "Divya Menon",
+        mobile: "9876500033",
+        practiceArea: "Corporate Law",
+        date: "2026-12-09",
+        status: "Completed"
+    }
+];
+
+const emptyForm = {
+    clientName: "",
+    mobile: "",
+    practiceArea: "",
+    date: "",
+    status: "Pending"
+};
+
+const practiceAreas = [
+    "Family Law",
+    "Property Law",
+    "Corporate Law",
+    "Criminal Defence",
+    "Employment Law",
+    "Consumer Rights"
+];
+
+const statuses = [
+    "Pending",
+    "Confirmed",
+    "Completed"
+];
+
+// Load records from browser storage
+function loadSaved() {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    return saved ? JSON.parse(saved) : samples;
+}
+
+// Save records in browser storage
+function saveRecords(records) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(records));
+}
+
+// Validate form details
+function validate(form) {
+    const errors = {};
+
+    if (!/^[A-Za-z ]+$/.test(form.clientName.trim())) {
+        errors.clientName = "Enter a name using letters and spaces only.";
+    }
+
+    if (!/^\d{10}$/.test(form.mobile)) {
+        errors.mobile = "Enter exactly 10 digits.";
+    }
+
+    if (!form.practiceArea) {
+        errors.practiceArea = "Select a practice area.";
+    }
+
+    if (!form.date) {
+        errors.date = "Select a consultation date.";
+    }
+
+    return errors;
+}
+
+function App() {
+
+    const [records, setRecords] = useState([]);
+    const [form, setForm] = useState(emptyForm);
+    const [editId, setEditId] = useState(null);
+    const [errors, setErrors] = useState({});
+    const [message, setMessage] = useState(null);
+
+    // Read records when page loads
+    useEffect(() => {
+        const saved = loadSaved();
+
+        setRecords(
+            [...saved].sort((a, b) => a.date.localeCompare(b.date))
+        );
+    }, []);
+
+    // Update form fields
+    const updateField = (e) => {
+        setForm({
+            ...form,
+            [e.target.name]: e.target.value
+        });
+
+        setErrors({
+            ...errors,
+            [e.target.name]: undefined
+        });
+    };
+
+    // Reset form
+    const resetForm = () => {
+        setForm(emptyForm);
+        setEditId(null);
+        setErrors({});
+    };
+
+    // Create or update consultation
+    const handleSubmit = (e) => {
+        e.preventDefault();
+
+        const found = validate(form);
+        setErrors(found);
+
+        if (Object.keys(found).length > 0) {
+            setMessage(null);
+            return;
+        }
+
+        let updatedRecords;
+
+        if (editId) {
+
+            updatedRecords = records.map(record =>
+                record._id === editId
+                    ? { ...form, _id: editId }
+                    : record
+            );
+
+            setMessage({
+                type: "success",
+                text: "Consultation updated successfully"
+            });
+
+        } else {
+
+            const newRecord = {
+                ...form,
+                _id: String(Date.now())
+            };
+
+            updatedRecords = [...records, newRecord];
+
+            setMessage({
+                type: "success",
+                text: "Consultation booked successfully"
+            });
+        }
+
+        updatedRecords.sort((a, b) =>
+            a.date.localeCompare(b.date)
+        );
+
+        setRecords(updatedRecords);
+        saveRecords(updatedRecords);
+        resetForm();
+    };
+
+    // Edit consultation
+    const startEdit = (record) => {
+
+        const {
+            clientName,
+            mobile,
+            practiceArea,
+            date,
+            status
+        } = record;
+
+        setForm({
+            clientName,
+            mobile,
+            practiceArea,
+            date,
+            status
+        });
+
+        setEditId(record._id);
+        setErrors({});
+        setMessage(null);
+
+        document.getElementById("book").scrollIntoView();
+    };
+
+    // Delete consultation
+    const handleDelete = (record) => {
+
+        const confirmDelete = window.confirm(
+            "Delete the consultation for " + record.clientName + "?"
+        );
+
+        if (!confirmDelete) return;
+
+        const updatedRecords = records.filter(
+            item => item._id !== record._id
+        );
+
+        setRecords(updatedRecords);
+        saveRecords(updatedRecords);
+
+        setMessage({
+            type: "success",
+            text: "Consultation deleted successfully"
+        });
+
+        if (editId === record._id) {
+            resetForm();
+        }
+    };
+
+    return (
+        <>
+
+            <header>
+                <a className="brand" href="#home">
+                    Lex<span>Counsel</span>
+                </a>
+
+                <nav>
+                    <a href="#book">Book</a>
+                    <a href="#consultations">Consultations</a>
+                </nav>
+            </header>
+
+            <section className="banner" id="home">
+                <h1>Book a Legal Consultation</h1>
+                <p>Tell us about your matter and meet the right advocate.</p>
+            </section>
+
+            <main>
+
+                {/* Consultation Form */}
+                <section className="card" id="book">
+
+                    <h2>
+                        {editId ? "Edit Consultation" : "New Consultation"}
+                    </h2>
+
+                    <form onSubmit={handleSubmit} noValidate>
+
+                        <div className="fields">
+
+                            <div>
+                                <label>Client Name</label>
+                                <input
+                                    name="clientName"
+                                    value={form.clientName}
+                                    onChange={updateField}
+                                    placeholder="Enter full name"
+                                />
+                                {errors.clientName &&
+                                    <small>{errors.clientName}</small>}
+                            </div>
+
+                            <div>
+                                <label>Mobile Number</label>
+                                <input
+                                    name="mobile"
+                                    type="tel"
+                                    maxLength="10"
+                                    value={form.mobile}
+                                    onChange={updateField}
+                                    placeholder="10-digit mobile number"
+                                />
+                                {errors.mobile &&
+                                    <small>{errors.mobile}</small>}
+                            </div>
+
+                            <div>
+                                <label>Practice Area</label>
+                                <select
+                                    name="practiceArea"
+                                    value={form.practiceArea}
+                                    onChange={updateField}
+                                >
+                                    <option value="">Select practice area</option>
+
+                                    {practiceAreas.map(area => (
+                                        <option key={area} value={area}>
+                                            {area}
+                                        </option>
+                                    ))}
+                                </select>
+
+                                {errors.practiceArea &&
+                                    <small>{errors.practiceArea}</small>}
+                            </div>
+
+                            <div>
+                                <label>Consultation Date</label>
+                                <input
+                                    type="date"
+                                    name="date"
+                                    value={form.date}
+                                    onChange={updateField}
+                                />
+
+                                {errors.date &&
+                                    <small>{errors.date}</small>}
+                            </div>
+
+                            <div>
+                                <label>Status</label>
+                                <select
+                                    name="status"
+                                    value={form.status}
+                                    onChange={updateField}
+                                >
+                                    {statuses.map(status => (
+                                        <option key={status} value={status}>
+                                            {status}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+
+                        </div>
+
+                        <div className="actions">
+
+                            <button type="submit">
+                                {editId
+                                    ? "Update Consultation"
+                                    : "Book Consultation"}
+                            </button>
+
+                            {editId && (
+                                <button
+                                    type="button"
+                                    className="plain"
+                                    onClick={resetForm}
+                                >
+                                    Cancel
+                                </button>
+                            )}
+
+                        </div>
+
+                    </form>
+
+                    {message && (
+                        <p className={`message ${message.type}`}>
+                            {message.text}
+                        </p>
+                    )}
+
+                </section>
+
+                {/* Consultation Records */}
+                <section className="card" id="consultations">
+
+                    <h2>Consultations ({records.length})</h2>
+
+                    {records.length === 0 && (
+                        <p className="empty">No consultations booked yet.</p>
+                    )}
+
+                    {records.length > 0 && (
+
+                        <div className="table-wrap">
+
+                            <table>
+
+                                <thead>
+                                    <tr>
+                                        <th>Client</th>
+                                        <th>Mobile</th>
+                                        <th>Practice Area</th>
+                                        <th>Date</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+
+                                    {records.map(record => (
+
+                                        <tr key={record._id}>
+
+                                            <td>{record.clientName}</td>
+                                            <td>{record.mobile}</td>
+                                            <td>{record.practiceArea}</td>
+                                            <td>{record.date}</td>
+
+                                            <td>
+                                                <span className={
+                                                    "status " +
+                                                    record.status.toLowerCase()
+                                                }>
+                                                    {record.status}
+                                                </span>
+                                            </td>
+
+                                            <td className="row-actions">
+
+                                                <button
+                                                    className="small"
+                                                    onClick={() => startEdit(record)}
+                                                >
+                                                    Edit
+                                                </button>
+
+                                                <button
+                                                    className="small danger"
+                                                    onClick={() => handleDelete(record)}
+                                                >
+                                                    Delete
+                                                </button>
+
+                                            </td>
+
+                                        </tr>
+
+                                    ))}
+
+                                </tbody>
+
+                            </table>
+
+                        </div>
+
+                    )}
+
+                    <p className="note">
+                        Demo version: consultation records are saved in your
+                        browser using localStorage.
+                    </p>
+
+                </section>
+
+            </main>
+
+            <footer>
+                © 2026 LexCounsel Legal Advisors. All rights reserved.
+            </footer>
+
+        </>
+    );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+
+</script>
+
+</body>
+</html>
